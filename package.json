@@ -1,6 +1,6 @@
 {
   "name": "bun-workspace",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Manage workspaces and dependency catalogs for Bun projects",
   "type": "module",
   "keywords": [
