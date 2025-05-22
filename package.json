@@ -1,0 +1,22 @@
+{
+  "name": "bun-workspace-utils",
+  "version": "0.0.1",
+  "type": "module",
+  "module": "src/index.ts",
+  "scripts": {
+    "build": "bun build.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage --coverage-dir=coverage"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "devDependencies": {
+    "@sxzz/eslint-config": "^7.0.1",
+    "@types/bun": "latest",
+    "lint-staged": "^16.0.0",
+    "publint": "^0.3.12",
+    "simple-git-hooks": "^2.13.0"
+  }
+}
