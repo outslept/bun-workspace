@@ -33,7 +33,9 @@
     "build": "bun build.ts",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage --coverage-dir=coverage"
+    "test:coverage": "bun test --coverage --coverage-dir=coverage",
+    "typecheck": "tsc --noEmit",
+    "prepare": "simple-git-hooks"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -44,5 +46,11 @@
     "lint-staged": "^16.0.0",
     "publint": "^0.3.12",
     "simple-git-hooks": "^2.13.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bun i && npx lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
   }
 }
