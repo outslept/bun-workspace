@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import process from "node:process";
 import { publint } from "publint";
@@ -20,7 +21,7 @@ try {
 }
 
 console.log(`${icons.info} Starting build...`);
-const buildResult = await Bun.build({
+const build = await Bun.build({
   entrypoints: ["./src/index.ts"],
   outdir: "./dist",
   target: "bun",
@@ -29,18 +30,34 @@ const buildResult = await Bun.build({
   minify: true,
 });
 
-if (!buildResult.success) {
+if (!build.success) {
   console.error(`${icons.error} Build failed`);
-  for (const message of buildResult.logs) {
-    console.error(`${icons.error} ${message}`);
-  }
+  build.logs.forEach((msg) => console.error(`${icons.error} ${msg}`));
   process.exit(1);
 }
 
 console.log(`${icons.success} Build completed successfully`);
-for (const output of buildResult.outputs) {
-  console.log(`${icons.arrow} Generated ${output.path}`);
+build.outputs.forEach((out) =>
+  console.log(`${icons.arrow} Generated ${out.path}`),
+);
+
+console.log(`\n${icons.info} Generating TypeScript declaration files...`);
+const tsc = Bun.spawnSync(["tsc", "--emitDeclarationOnly", "--declaration"]);
+
+if (tsc.exitCode !== 0) {
+  console.error(`${icons.error} TypeScript declaration generation failed`);
+  console.error(String(tsc.stderr));
+  process.exit(1);
 }
+
+if (!existsSync("./dist/index.d.ts")) {
+  console.error(
+    `${icons.error} Declaration file not generated: ./dist/index.d.ts`,
+  );
+  process.exit(1);
+}
+
+console.log(`${icons.success} TypeScript declarations generated`);
 
 console.log(`\n${icons.info} Running package validation...`);
 const { messages, pkg } = await publint({
@@ -51,9 +68,9 @@ const { messages, pkg } = await publint({
 
 if (messages.length > 0) {
   console.log(`\n${icons.error} Package validation issues found:`);
-  for (const message of messages) {
-    console.log(`${icons.warning} ${formatMessage(message, pkg)}`);
-  }
+  messages.forEach((msg) =>
+    console.log(`${icons.warning} ${formatMessage(msg, pkg)}`),
+  );
   process.exit(1);
 }
 
