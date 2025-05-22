@@ -56,11 +56,48 @@ describe("bun-workspace", () => {
   });
 
   describe("catalog", () => {
-    it("should create and manage catalogs", () => {
+    it("should create new catalogs and mark as changed", () => {
+      const workspace = parseBunWorkspace(JSON.stringify({ workspaces: {} }));
+
+      expect(workspace.hasChanged()).toBe(false);
+
+      workspace.createCatalog("test");
+      expect(workspace.hasChanged()).toBe(true);
+      expect(workspace.listCatalogs()).toEqual(["test"]);
+    });
+
+    it("should create default catalog and mark as changed", () => {
+      const workspace = parseBunWorkspace(JSON.stringify({ workspaces: {} }));
+
+      expect(workspace.hasChanged()).toBe(false);
+
+      workspace.createCatalog("default");
+      expect(workspace.hasChanged()).toBe(true);
+      expect(workspace.listCatalogs()).toEqual(["default"]);
+    });
+
+    it("should not mark as changed when catalog already exists", () => {
+      const workspace = parseBunWorkspace(
+        JSON.stringify({
+          workspaces: {
+            catalog: {},
+            catalogs: { existing: {} },
+          },
+        }),
+      );
+
+      expect(workspace.hasChanged()).toBe(false);
+
+      workspace.createCatalog("default");
+      workspace.createCatalog("existing");
+      expect(workspace.hasChanged()).toBe(false);
+    });
+
+    it("should manage catalog lifecycle", () => {
       const workspace = parseBunWorkspace(JSON.stringify({ workspaces: {} }));
 
       workspace.createCatalog("test");
-      workspace.setCatalogVersion("test", "package", "1.0.0");
+      workspace.setPackage("test", "package", "1.0.0");
       expect(workspace.getCatalogVersion("test", "package")).toBe("1.0.0");
 
       workspace.removeCatalog("test");
@@ -204,8 +241,8 @@ describe("bun-workspace", () => {
     it("should get and set package versions in specific catalogs", () => {
       const workspace = parseBunWorkspace(JSON.stringify({ workspaces: {} }));
 
-      workspace.setCatalogVersion("default", "react", "18.0.0");
-      workspace.setCatalogVersion("next", "react", "19.0.0");
+      workspace.setPackage("default", "react", "18.0.0");
+      workspace.setPackage("next", "react", "19.0.0");
 
       expect(workspace.getCatalogVersion("default", "react")).toBe("18.0.0");
       expect(workspace.getCatalogVersion("next", "react")).toBe("19.0.0");

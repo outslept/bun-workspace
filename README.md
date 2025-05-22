@@ -1,86 +1,98 @@
 # bun-workspace
 
-Manage multiple dependency catalogs and version sets in Bun workspaces. Organize packages into named catalogs for better dependency management.
+TypeScript library for managing Bun workspace catalogs and dependency versions.
 
-```bash
+```sh
 bun add bun-workspace
 ```
 
 ## Usage
 
-```ts
+```typescript
 import { parseBunWorkspace } from 'bun-workspace';
 
-// Parse workspace configuration
-const workspace = parseBunWorkspace(JSON.stringify({
-  workspaces: {
-    catalog: {
+const workspace = parseBunWorkspace(`{
+  "workspaces": {
+    "catalog": {
       "react": "^18.2.0"
     },
-    catalogs: {
-      "next-app": {
-        "next": "^14.0.0",
-        "react": "^18.2.0"
+    "catalogs": {
+      "testing": {
+        "jest": "^29.0.0"
       }
     }
   }
-}));
+}`);
 
-// Add package to catalog
-workspace.setPackage("next-app", "react-dom", "^18.2.0");
+// Add packages to catalogs
+workspace.setPackage("default", "react-dom", "^18.2.0");
+workspace.setPackage("testing", "vitest", "^0.34.0");
 
-// Get catalogs containing package
-workspace.getPackageCatalogs("react"); // ["next-app", "default"]
-
-// Get catalog contents
-workspace.getCatalogPackages("next-app");
+// Query catalogs
+workspace.getPackageCatalogs("react"); // ["default"]
+workspace.getCatalogPackages("testing"); // { jest: "^29.0.0", vitest: "^0.34.0" }
 ```
 
 ## API
 
-### `parseBunWorkspace(content: string): BunWorkspace`
+### parseBunWorkspace(content: string)
 
-Creates a workspace instance from JSON string.
+Parse workspace configuration from JSON string.
 
-### BunWorkspace Interface
+### BunWorkspace Methods
 
-```ts
-interface BunWorkspace {
-  // Get full workspace configuration
-  getContent: () => BunWorkspaceSchema;
+**Package Management**
 
-  // Update workspace configuration
-  setContent: (content: BunWorkspaceSchema) => void;
+```typescript
+setPackage(catalog: string, packageName: string, version: string): void
+getCatalogVersion(catalogName: string, packageName: string): string | undefined
+getPackageCatalogs(packageName: string): string[]
+```
 
-  // Check if workspace was modified
-  hasChanged: () => boolean;
+**Catalog Management**
 
-  // Add/update package in catalog
-  setPackage: (catalog: string, packageName: string, version: string) => void;
+```typescript
+createCatalog(name: string): void
+removeCatalog(name: string): void
+listCatalogs(): string[]
+getCatalogPackages(catalogName: string): Record<string, string>
+```
 
-  // Get all catalogs containing package
-  getPackageCatalogs: (packageName: string) => string[];
+**Configuration**
 
-  // Create new catalog
-  createCatalog: (name: string) => void;
+```typescript
+getContent(): BunWorkspaceSchema
+setContent(content: BunWorkspaceSchema): void
+hasChanged(): boolean
+toString(): string
+```
 
-  // Remove catalog
-  removeCatalog: (name: string) => void;
+### Catalog Types
 
-  // Set package version in catalog
-  setCatalogVersion: (catalogName: string, packageName: string, version: string) => void;
+**Default Catalog** - Use "default" for `workspaces.catalog`
 
-  // Get package version from catalog
-  getCatalogVersion: (catalogName: string, packageName: string) => string | undefined;
+```
+workspace.setPackage("default", "react", "^18.2.0");
+```
 
-  // List all catalogs
-  listCatalogs: () => string[];
+**Named Catalogs** - Custom names for `workspaces.catalogs[name]`
 
-  // Get all packages in catalog
-  getCatalogPackages: (catalogName: string) => Record<string, string>;
+```typescript
+workspace.setPackage("testing", "jest", "^29.0.0");
+workspace.setPackage("build", "webpack", "^5.88.0");
+```
 
-  // Get workspace as formatted JSON string
-  toString: () => string;
+Integration
+Reference catalogs in package.json using the catalog: protocol:
+
+```
+{
+  "dependencies": {
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "jest": "catalog:testing"
+  }
 }
 ```
 
