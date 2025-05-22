@@ -1,5 +1,5 @@
 {
-  "name": "bun-workspace-utils",
+  "name": "bun-workspace-catalog",
   "version": "0.0.1",
   "type": "module",
   "module": "src/index.ts",
