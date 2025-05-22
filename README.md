@@ -35,7 +35,7 @@ workspace.getCatalogPackages("testing"); // { jest: "^29.0.0", vitest: "^0.34.0"
 
 ## API
 
-### parseBunWorkspace(content: string)
+### `parseBunWorkspace(content: string)`
 
 Parse workspace configuration from JSON string.
 
@@ -43,7 +43,7 @@ Parse workspace configuration from JSON string.
 
 **Package Management**
 
-```typescript
+```
 setPackage(catalog: string, packageName: string, version: string): void
 getCatalogVersion(catalogName: string, packageName: string): string | undefined
 getPackageCatalogs(packageName: string): string[]
@@ -51,7 +51,7 @@ getPackageCatalogs(packageName: string): string[]
 
 **Catalog Management**
 
-```typescript
+```
 createCatalog(name: string): void
 removeCatalog(name: string): void
 listCatalogs(): string[]
@@ -60,7 +60,7 @@ getCatalogPackages(catalogName: string): Record<string, string>
 
 **Configuration**
 
-```typescript
+```
 getContent(): BunWorkspaceSchema
 setContent(content: BunWorkspaceSchema): void
 hasChanged(): boolean
@@ -71,7 +71,7 @@ toString(): string
 
 **Default Catalog** - Use "default" for `workspaces.catalog`
 
-```
+```typescript
 workspace.setPackage("default", "react", "^18.2.0");
 ```
 
@@ -85,7 +85,7 @@ workspace.setPackage("build", "webpack", "^5.88.0");
 Integration
 Reference catalogs in package.json using the catalog: protocol:
 
-```
+```json
 {
   "dependencies": {
     "react": "catalog:"
