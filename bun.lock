@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "bun-workspace-catalog",
+      "name": "bun-workspace",
       "devDependencies": {
         "@sxzz/eslint-config": "^7.0.1",
         "@types/bun": "latest",

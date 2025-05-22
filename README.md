@@ -1,15 +1,15 @@
-# bun-workspace-catalog
+# bun-workspace
 
 Manage multiple dependency catalogs and version sets in Bun workspaces. Organize packages into named catalogs for better dependency management.
 
 ```bash
-bun add bun-workspace-catalog
+bun add bun-workspace
 ```
 
 ## Usage
 
 ```ts
-import { parseBunWorkspace } from 'bun-workspace-catalog';
+import { parseBunWorkspace } from 'bun-workspace';
 
 // Parse workspace configuration
 const workspace = parseBunWorkspace(JSON.stringify({

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { parseBunWorkspace } from ".";
 
-describe("bun-workspace-catalog", () => {
+describe("bun-workspace", () => {
   describe("workspace", () => {
     it("should initialize empty workspace correctly", () => {
       const workspace = parseBunWorkspace(JSON.stringify({ workspaces: {} }));
