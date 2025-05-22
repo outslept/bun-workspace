@@ -90,13 +90,10 @@ function parseBunWorkspace(content: string): BunWorkspace {
     if (catalogName === "default") {
       config.workspaces.catalog![packageName] = version;
     } else {
-      if (!config.workspaces.catalogs) {
-        config.workspaces.catalogs = {};
-      }
-      if (!config.workspaces.catalogs[catalogName]) {
-        config.workspaces.catalogs[catalogName] = {};
-      }
-      config.workspaces.catalogs[catalogName][packageName] = version;
+      const catalogs = (config.workspaces.catalogs =
+        config.workspaces.catalogs || {});
+      const catalogObj = (catalogs[catalogName] = catalogs[catalogName] || {});
+      catalogObj[packageName] = version;
     }
     hasChanged = true;
   }
